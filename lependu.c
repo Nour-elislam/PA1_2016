@@ -7,37 +7,44 @@
 #include <SDL/SDL_ttf.h>
 #include <string.h>
 #include <time.h>
-#define NB_IMG 14
-#define NB_LIVES 6
-#define DICTIONARY      "file.txt"
-#define NB_TEST         12          
-#define NB_WORD         331612     
-#define MAX_LEN         50         
+#define NB_IMG 14 		// nombre d'image	
+		
+#define DICTIONARY      "file.txt" // FICHIER DICTIONNAIRE AVEC TOUT LES MOTS
+
+#define NB_WORD         331612     // le nombre de mots dans le fichier dictionnaire
+#define MAX_LEN         50          // LONGEUR MAXIMAL D'UN MOT
 #define NOT_FOUND  '-' 
 
 
 
 
-    SDL_Surface *ecran = NULL, *menu = NULL, *menu2 = NULL, *fond = NULL, *guessedword = NULL , *WinLose[NB_IMG];
-    SDL_Rect menuPosition, WordPos, winpos, losePos, BgPosition, HangPosition, menu2Pos;
-    SDL_Event ongame;
-    TTF_Font *menupolice = NULL, *wordpolice = NULL;
-    SDL_Color Black = {0, 0, 20};
-    SDL_Color White = {255,255,255};
-    char t_wordtoguess[MAX_LEN];
-    char* wordtoguess;
-    char t_wordtoshow[MAX_LEN];
+    SDL_Surface *ecran = NULL,		/**/
+ 	*menu = NULL, 			/*TEXTE DU MENU*/
+ 	*menu2 = NULL,			/*TEXTE DU 2eme Menu*/
+ 	*fond = NULL,			/*arriere plan*/
+ 	*guessedword = NULL ,/*mot devinee*/
+ 	*WinLose[NB_IMG];/*lependu gangnat ou perdu*/
+    SDL_Rect menuPosition, WordPos, winpos, losePos, BgPosition, HangPosition, menu2Pos;				//position de rectangle
+    SDL_Event ongame;        		// evenement pricipal
+    TTF_Font *menupolice = NULL, *wordpolice = NULL; // CHARGEMENT DES POLICES
+    SDL_Color Black = {0, 0, 0}; 
+    SDL_Color White = {255,255,255};			// DEF COULEUR
+
+
+    char t_wordtoguess[MAX_LEN];		// mot a deviner
+    char* wordtoguess;				
+    char t_wordtoshow[MAX_LEN];			// mot deviner et afficher
     char* wordtoshow;
-    char* linput;
-    int play = 1, lives=1, onplay=0, onmenu = 1, onmenu2, newgame=1;
+  
+    int play = 1, onplay=0, onmenu = 1, onmenu2, newgame=1; // initialisation
     unsigned int count = 0;
-    size_t WordLen;
+    size_t WordLen;   // longeur des mots
  
     
-    char letterinput = 'd';
+    char letterinput = 'd';   //
 
     
-    SDL_Surface *TextOnScreen = NULL;
+    
 
  
     
@@ -45,7 +52,7 @@ void LoadRandomWord();
 int existe(char *str, char caract);
     
 int RandomWordPos (void)
-{
+{// fonction qui retourne un nombre aleatoire parmi le nombre des mots
    srand (time (NULL));
    return (int)(rand() / (double)RAND_MAX * (NB_WORD - 1));
 
@@ -53,10 +60,10 @@ int RandomWordPos (void)
     
     
     
-    
+   
 
 char * RandomWord (int word_pos, const char * dictionary)
-{
+{// fonction qui prend en paramatre la position et le fichier dictionnaire.txt et retourne le mot correspondant 
           char * word = NULL;
 
    
@@ -111,12 +118,12 @@ char * RandomWord (int word_pos, const char * dictionary)
     
 
     
-void lSprites(){
+void lSprites(){ // initialisation des sprites
     for(int i = 0; i < NB_IMG; i++){
         WinLose[i]=NULL;
     }
 }
-void loadSprites(){
+void loadSprites(){ // chargement des images
     fond = IMG_Load("Images/background.jpg");
     WinLose[0] = IMG_Load("Images/pendu-1.png");
     WinLose[1] = IMG_Load("Images/pendu-2.png");
@@ -134,7 +141,7 @@ void loadSprites(){
     WinLose[13] = IMG_Load("Images/lost.png");
 }
 
-void Initialisation(){
+void Initialisation(){ // INITIALISATION DE LA SDL
     SDL_Init(SDL_INIT_VIDEO);
     TTF_Init();
     SDL_EnableKeyRepeat(300, 10);
@@ -142,8 +149,8 @@ void Initialisation(){
     SDL_WM_SetCaption("Welcome to hangman", NULL);
 
     /* load font */
-    menupolice = TTF_OpenFont("angelina.ttf", 40);
-    wordpolice = TTF_OpenFont("arial.ttf", 30);
+    menupolice = TTF_OpenFont("Polices/angelina.ttf", 40);
+    wordpolice = TTF_OpenFont("Polices/arial.ttf", 30);
     
         /*  loadSprites  */
     lSprites();
@@ -167,8 +174,8 @@ void Initialisation(){
     
     onmenu=1;
     
-    menu = TTF_RenderText_Blended(menupolice, "press space to play", White);
-    menu2 = TTF_RenderText_Blended(menupolice, "press Enter to replay", Black);
+    menu = TTF_RenderText_Blended(menupolice, "press ENTER to play", White);
+    menu2 = TTF_RenderText_Blended(menupolice, "press ENTER to replay", Black);
     LoadRandomWord(); 
     
 
@@ -177,7 +184,7 @@ void Initialisation(){
 
 
 int existe(char *str, char caract)
-    {
+    { // fonction verifier si la lettre saisie existe elle retourne 1 sinon 0
     unsigned int i;
     for(i=0 ; i<WordLen ; i++)
     {
@@ -189,7 +196,7 @@ int existe(char *str, char caract)
 
 
     
-void LoadRandomWord(){
+void LoadRandomWord(){ // procedure Charge le mot aleatoire dans la surface
     wordtoguess =RandomWord (RandomWordPos (), DICTIONARY);
     strcpy(t_wordtoguess, wordtoguess);
     WordLen = strlen(t_wordtoguess);
@@ -200,7 +207,7 @@ void LoadRandomWord(){
 
 
 
-void initlosewin(){
+void initlosewin(){ // procedure initialise le mot a deviner et a afficher sur ecran
     memset (t_wordtoshow, 0, sizeof (t_wordtoshow));
     for(int i = 1; i < WordLen-1; i++){
         t_wordtoshow[i]=NOT_FOUND;
@@ -219,7 +226,7 @@ void initlosewin(){
 }
 
 
-void playlosewin (){
+void playlosewin (){ // procedure mise a jour du mot a deviner et a afficher sur ecran
     for(int i = 1; i < WordLen-1; i++){
         if(t_wordtoguess[i]==letterinput){
             t_wordtoshow[i]=letterinput;
@@ -228,7 +235,7 @@ void playlosewin (){
      guessedword = TTF_RenderText_Solid(wordpolice,wordtoshow , White);
 }
 
-int win(){
+int win(){ // Detection de l'evenement gagner';p
     if (strcmp(wordtoguess,wordtoshow) == 0)
     return 1;
     else return 0;
@@ -239,7 +246,7 @@ int win(){
 int main(int argc, char *argv[])
 {
     Initialisation();    
-    /*   game loop   */
+    /* Boucle principal de jeu */
     while (play)
     {
         SDL_WaitEvent(&ongame);
@@ -386,7 +393,7 @@ int main(int argc, char *argv[])
 
 
                     case SDLK_RETURN:
-                        if(onmenu || onmenu2){
+                        if(onmenu || onmenu2){ // passage du menu1 ou menu2 du jeu
                             onmenu = 0;
                             onmenu2=0;
                             onplay=1;
