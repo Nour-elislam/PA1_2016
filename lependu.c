@@ -11,8 +11,8 @@
 #define NB_LIVES 6
 #define DICTIONARY      "file.txt"
 #define NB_TEST         12          
-#define NB_WORD         331612      
-#define MAX_LEN         50          
+#define NB_WORD         331612     
+#define MAX_LEN         50         
 #define NOT_FOUND  '-' 
 
 
@@ -27,10 +27,10 @@
     char* wordtoguess;
     char t_wordtoshow[MAX_LEN];
     char* wordtoshow;
-    int play = 1, lives=1, onplay=0, onmenu, onmenu2, newgame;
+    int play = 1, lives=1, onplay=0, onmenu, onmenu2, newgame=1;
     size_t WordLen;
     
-    const char* letterinput = "ddddddddddddddddddddddd";
+    char letterinput = 'd';
 
     
     SDL_Surface *TextOnScreen = NULL;
@@ -76,7 +76,7 @@ char * RandomWord (int word_pos, const char * dictionary)
          
          while (fgets (buf, sizeof buf, fp) != NULL)
          {
- 
+
             if (count == word_pos)
             {
 
@@ -112,7 +112,6 @@ char * RandomWord (int word_pos, const char * dictionary)
    return word;
 }
     
-
 
 
 
@@ -190,14 +189,37 @@ void LoadRandomWord(){
  //   guessedword = TTF_RenderText_Solid(police,wordtoguess , White);
     
 }
-void losewin(){
+void initlosewin(){
+    char linput;
+    linput = (char)letterinput;
     memset (t_wordtoshow, 0, sizeof (t_wordtoshow));
-    for(int i = 0; i < WordLen; i++){
+    for(int i = 1; i < WordLen-1; i++){
         t_wordtoshow[i]=NOT_FOUND;
+        if(t_wordtoguess[0]==t_wordtoguess[i]){
+            t_wordtoshow[i]=t_wordtoguess[0];
+            printf("%s\n",t_wordtoguess);
+        }
+        if(t_wordtoguess[WordLen-1]==t_wordtoguess[i]){
+            t_wordtoshow[i]=t_wordtoguess[WordLen-1];
+            printf("%s\n",t_wordtoguess);
+        }
+
     }
     t_wordtoshow[0]=t_wordtoguess[0];
     t_wordtoshow[WordLen-1]=t_wordtoguess[WordLen-1];
     wordtoshow=(char*)t_wordtoshow;
+
+    guessedword = TTF_RenderText_Solid(police,wordtoshow , White);
+}
+
+
+void playlosewin (){
+    for(int i = 1; i < WordLen-1; i++){
+        if(t_wordtoguess[i]==letterinput){
+            t_wordtoshow[i]=letterinput;
+        }
+    }
+    
     guessedword = TTF_RenderText_Solid(police,wordtoshow , White);
 }
 
@@ -224,90 +246,91 @@ int main(int argc, char *argv[])
                 switch(ongame.key.keysym.sym)
                   {
                     case SDLK_ESCAPE:
-                        onplay =0;
                         play=0;
                         break;
                     case SDLK_a:
-                        letterinput = "A";
+                        letterinput = 'A';
                         break;
                     case SDLK_z:
-                        letterinput = "Z";
+                        letterinput = 'Z';
                         break;
                     case SDLK_e:
-                        letterinput = "E";
+                        letterinput = 'E';
                         break;
                     case SDLK_r:
-                        letterinput = "R";
+                        letterinput = 'R';
                         break;
                     case SDLK_t:
-                        letterinput = "T";
+                        letterinput = 'T';
                         break;
                     case SDLK_y:
-                        letterinput = "Y";
+                        letterinput = 'Y';
                         break;
                     case SDLK_u:
-                        letterinput = "U";
+                        letterinput = 'U';
                         break;
                     case SDLK_i:
-                        letterinput = "I";
+                        letterinput = 'I';
                         break;
                     case SDLK_o:
-                        letterinput = "O";
+                        letterinput = 'O';
                         break;
                     case SDLK_p:
-                        letterinput = "P";
+                        letterinput = 'P';
                         break;
                     case SDLK_q:
-                        letterinput = "Q";
+                        letterinput = 'Q';
                         break;
                     case SDLK_s:
-                        letterinput = "S";
+                        letterinput = 'S';
                         break;
                     case SDLK_d:
-                        letterinput = "D";
+                        letterinput = 'D';
                         break;
                     case SDLK_f:
-                        letterinput = "F";
+                        letterinput = 'F';
                     break;
                     case SDLK_g:
-                        letterinput = "G";
+                        letterinput = 'G';
                     break;
                     case SDLK_h:
-                        letterinput = "H";
+                        letterinput = 'H';
                     break;
                     case SDLK_j:
-                        letterinput = "J";
+                        letterinput = 'J';
                     break;
                     case SDLK_k:
-                        letterinput = "K";
+                        letterinput = 'K';
                     break;
                     case SDLK_l:
-                        letterinput = "L";
+                        letterinput = 'L';
                     break;
                     case SDLK_m:
-                        letterinput = "M";
+                        letterinput = 'M';
+                        break;
                     case SDLK_w:
-                        letterinput = "W";
+                        letterinput = 'W';
                     break;
                     case SDLK_x:
-                        letterinput = "X";
+                        letterinput = 'X';
                     case SDLK_c:
-                        letterinput = "C";
+                        letterinput = 'C';
                     break;
                     case SDLK_v:
-                        letterinput = "V";
+                        letterinput = 'V';
                     break;
                     case SDLK_b:
-                        letterinput = "B";
+                        letterinput = 'B';
                     break;
                     case SDLK_n:
-                        letterinput = "N";
+                        letterinput = 'N';
                     break;
 
                     case SDLK_SPACE:
                         onplay++;
                         break;
                     case SDLK_RETURN:
+
                         onmenu2=0;
                         onplay=1;
                         newgame=1;
@@ -317,13 +340,14 @@ int main(int argc, char *argv[])
         }
         
         if (onplay>=9)onplay =9;
-        if(onplay>7)onmenu2 =1;
+        if(onplay>7)onmenu2 =1, newgame=0;
 
 
 
         SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 255, 255, 255));
         if(newgame){
             LoadRandomWord();
+            initlosewin();
             newgame =0;
         }
 
@@ -334,15 +358,22 @@ int main(int argc, char *argv[])
                 if (onmenu2){
             SDL_BlitSurface(menu2, NULL, ecran, &menu2Pos);
         }
+//         if(onplay==1){
+//             initlosewin();
+//             
+//         }
         
 
         if (onplay){
 
-            losewin();
+            
+            
+
 
             
             
             onmenu =0;
+            playlosewin();
             
             /* word blit */
             SDL_BlitSurface(guessedword, NULL, ecran, &WordPos);
