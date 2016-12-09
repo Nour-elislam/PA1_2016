@@ -391,7 +391,10 @@ int main(int argc, char *argv[])
     /* Boucle principal de jeu */
     while (play)
     {
+      
+
 	Handlekeyboard();
+
         
 
         if(newgame){
@@ -399,18 +402,19 @@ int main(int argc, char *argv[])
             initlosewin();
             newgame =0;
         }
+              	        /* screen blit */
+        SDL_BlitSurface(fond, NULL, ecran, &BgPosition); 
 
         
-        /* screen blit */
-        SDL_BlitSurface(fond, NULL, ecran, &BgPosition); 
-                if (onmenu2){
+
+        if (onmenu2){
             SDL_BlitSurface(menu2, NULL, ecran, &menu2Pos);
         }
         
         if(win()){
-            onmenu2 = 1;
             onplay = 0;
             SDL_BlitSurface(WinLose[NB_IMG-2], NULL, ecran, &winpos);
+	    SDL_BlitSurface(menu2, NULL, ecran, &menu2Pos);
         }
 
         if (onplay){
@@ -422,12 +426,10 @@ int main(int argc, char *argv[])
                 if (count == 7){
                     SDL_BlitSurface(WinLose[count+4], NULL, ecran, &HangPosition);
                     SDL_BlitSurface(WinLose[NB_IMG-1], NULL, ecran, &losePos);
-   //                 SDL_Delay(1000);
-    //                count = 9;
-                    onmenu2 =1;
 
-                    
+                    onmenu2 =1;                  
                 }
+                /* lose condition */
                 if (count < 7){
                     SDL_BlitSurface(WinLose[count+4], NULL, ecran, &HangPosition);            
                 }
