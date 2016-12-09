@@ -70,49 +70,35 @@ char * RandomWord (int word_pos, const char * dictionary)
    
    if (dictionary != NULL)
    {
-      FILE * fp = fopen (dictionary, "r");
-      
+      FILE * fp = fopen (dictionary, "r");     
       if (fp != NULL)
       {
          int count = 0;
-         char buf [MAX_LEN];
-         
-         
+         char buf [MAX_LEN];         
          while (fgets (buf, sizeof buf, fp) != NULL)
          {
-
             if (count == word_pos)
             {
-
                {
                   char * p = strchr (buf, '\n');
-
                   if (p != NULL)
                   {
                      *p = 0;
                   }
                }
                word = (char*)(malloc (strlen (buf) + 1));
-               
-               if (word != NULL)
+                              if (word != NULL)
                {
                   strcpy (word, buf);
                }
-               else
-               
+               else               
                break;
             }
-            
             count++;
-         }
-         
-         
+         }         
          fclose (fp);
       }
-   }
-   
-   
-   
+   }   
    return word;
 }
     
@@ -240,16 +226,8 @@ int win(){ // Detection de l'evenement gagner';p
     return 1;
     else return 0;
 }
-
-
-
-int main(int argc, char *argv[])
-{
-    Initialisation();    
-    /* Boucle principal de jeu */
-    while (play)
-    {
-        SDL_WaitEvent(&ongame);
+void Handlekeyboard(){// gestion du clavier
+  SDL_WaitEvent(&ongame);
         switch(ongame.type)
         {
             case SDL_QUIT:
@@ -404,6 +382,16 @@ int main(int argc, char *argv[])
                         
                         }
         }
+}
+
+
+int main(int argc, char *argv[])
+{
+    Initialisation();    
+    /* Boucle principal de jeu */
+    while (play)
+    {
+	Handlekeyboard();
         
 
         if(newgame){
@@ -411,9 +399,6 @@ int main(int argc, char *argv[])
             initlosewin();
             newgame =0;
         }
-
-
-
 
         
         /* screen blit */
