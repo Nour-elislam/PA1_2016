@@ -11,23 +11,26 @@
 #define NB_LIVES 6
 #define DICTIONARY      "file.txt"
 #define NB_TEST         12          
-#define NB_WORD         331612     
+#define NB_WORD         331612      
 #define MAX_LEN         50         
 #define NOT_FOUND  '-' 
+
 
 
 
     SDL_Surface *ecran = NULL, *menu = NULL, *menu2 = NULL, *fond = NULL, *guessedword = NULL , *WinLose[NB_IMG];
     SDL_Rect menuPosition, WordPos, WinLosePos, BgPosition, HangPosition, menu2Pos;
     SDL_Event ongame;//, textin;
-    TTF_Font *police = NULL;
+    TTF_Font *menupolice = NULL, *wordpolice = NULL;
     SDL_Color Black = {0, 0, 20};
     SDL_Color White = {255,255,255};
     char t_wordtoguess[MAX_LEN];
     char* wordtoguess;
     char t_wordtoshow[MAX_LEN];
     char* wordtoshow;
+    char* linput;
     int play = 1, lives=1, onplay=0, onmenu, onmenu2, newgame=1;
+    unsigned int count = 0;
     size_t WordLen;
     
     char letterinput = 'd';
@@ -36,16 +39,12 @@
     SDL_Surface *TextOnScreen = NULL;
     
     
-// SDL_Surface *TextOnScreen(){
-// 
-//     SDL_Surface *text = NULL;
-//     return text;
-// }
+
 
  
     
 void LoadRandomWord();
-    
+int existe(char *str, char caract);
     
 int RandomWordPos (void)
 {
@@ -53,8 +52,6 @@ int RandomWordPos (void)
    return (int)(rand() / (double)RAND_MAX * (NB_WORD - 1));
 
 }
-    
-    
     
     
     
@@ -76,7 +73,6 @@ char * RandomWord (int word_pos, const char * dictionary)
          
          while (fgets (buf, sizeof buf, fp) != NULL)
          {
-
             if (count == word_pos)
             {
 
@@ -115,6 +111,7 @@ char * RandomWord (int word_pos, const char * dictionary)
 
 
 
+
     
 void lSprites(){
     for(int i = 0; i < NB_IMG; i++){
@@ -147,7 +144,8 @@ void Initialisation(){
     SDL_WM_SetCaption("Welcome to hangman", NULL);
 
     /* load font */
-    police = TTF_OpenFont("angelina.ttf", 30);
+    menupolice = TTF_OpenFont("angelina.ttf", 40);
+    wordpolice = TTF_OpenFont("arial.ttf", 30);
     
         /*  loadSprites  */
     lSprites();
@@ -158,7 +156,7 @@ void Initialisation(){
     BgPosition.y = 0;
     HangPosition.x = 65;
     HangPosition.y = 100;
-    WordPos.x = 245;
+    WordPos.x = 230;
     WordPos.y = 360;
     menuPosition.x = 207;
     menuPosition.y = 200;
@@ -169,13 +167,42 @@ void Initialisation(){
     
     onmenu=1;
     
-    menu = TTF_RenderText_Blended(police, "press space to play", White);
-    menu2 = TTF_RenderText_Blended(police, "press Enter to replay", Black);
+    menu = TTF_RenderText_Blended(menupolice, "press space to play", White);
+    menu2 = TTF_RenderText_Blended(menupolice, "press Enter to replay", Black);
     LoadRandomWord(); 
     
 
     
 }
+
+// int ifexistsinWtoShow(char linput, size_t lenght){
+//     int exists = 0;
+//     for (int i =0 ; i<lenght; i++){
+//         if (strcspn(t_wordtoshow, linput)){
+//             exists = 1;
+//         }
+//     }
+// }
+// int ifexistsinWtoGuess(char linput, size_t lenght){
+//     int exists = 0;
+//     for (int i =0 ; i<lenght; i++){
+//         if (t_wordtoguess[i]==linput){
+//             exists = 1;
+//         }   
+//     }
+//     
+// }
+
+int existe(char *str, char caract)
+    {
+    unsigned int i;
+    for(i=0 ; i<WordLen ; i++)
+    {
+      if (str[i] == caract)
+       return 1;
+    }
+    return (0);
+    }
 
 void LoadRandomWord(){
     wordtoguess =RandomWord (RandomWordPos (), DICTIONARY);
@@ -190,8 +217,7 @@ void LoadRandomWord(){
     
 }
 void initlosewin(){
-    char linput;
-    linput = (char)letterinput;
+
     memset (t_wordtoshow, 0, sizeof (t_wordtoshow));
     for(int i = 1; i < WordLen-1; i++){
         t_wordtoshow[i]=NOT_FOUND;
@@ -209,7 +235,8 @@ void initlosewin(){
     t_wordtoshow[WordLen-1]=t_wordtoguess[WordLen-1];
     wordtoshow=(char*)t_wordtoshow;
 
-    guessedword = TTF_RenderText_Solid(police,wordtoshow , White);
+//     guessedword = TTF_RenderText_Solid(wordpolice, wordtoshow , White);
+    SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 255, 255, 255));
 }
 
 
@@ -220,7 +247,7 @@ void playlosewin (){
         }
     }
     
-    guessedword = TTF_RenderText_Solid(police,wordtoshow , White);
+     guessedword = TTF_RenderText_Solid(wordpolice,wordtoshow , White);
 }
 
 int main(int argc, char *argv[])
@@ -250,90 +277,144 @@ int main(int argc, char *argv[])
                         break;
                     case SDLK_a:
                         letterinput = 'A';
+                          
+                        if ((existe(t_wordtoguess, letterinput)==0) && count<7) count++;
+//                         printf("\n %d \n", ifexistsinWtoGuess(letterinput, WordLen));
+                        
                         break;
                     case SDLK_z:
                         letterinput = 'Z';
+                          
+                        if ((existe(t_wordtoguess, letterinput)==0) && count<7) count++;
                         break;
                     case SDLK_e:
                         letterinput = 'E';
+                          
+                        if ((existe(t_wordtoguess, letterinput)==0) && count<7) count++;
                         break;
                     case SDLK_r:
                         letterinput = 'R';
+                          
+                        if ((existe(t_wordtoguess, letterinput)==0) && count<7) count++;
+                        
                         break;
                     case SDLK_t:
                         letterinput = 'T';
+                          
+                        if ((existe(t_wordtoguess, letterinput)==0) && count<7) count++;
                         break;
                     case SDLK_y:
                         letterinput = 'Y';
+                          
+                        if ((existe(t_wordtoguess, letterinput)==0) && count<7) count++;
                         break;
                     case SDLK_u:
                         letterinput = 'U';
+                          
+                        if ((existe(t_wordtoguess, letterinput)==0) && count<7) count++;
                         break;
                     case SDLK_i:
                         letterinput = 'I';
+                          
+                        if ((existe(t_wordtoguess, letterinput)==0) && count<7) count++;
                         break;
                     case SDLK_o:
                         letterinput = 'O';
+                          
+                        if ((existe(t_wordtoguess, letterinput)==0) && count<7) count++;
                         break;
                     case SDLK_p:
                         letterinput = 'P';
+                          
+                        if ((existe(t_wordtoguess, letterinput)==0) && count<7) count++;
                         break;
                     case SDLK_q:
                         letterinput = 'Q';
+                          
+                        if ((existe(t_wordtoguess, letterinput)==0) && count<7) count++;
                         break;
                     case SDLK_s:
                         letterinput = 'S';
+                          
+                        if ((existe(t_wordtoguess, letterinput)==0) && count<7) count++;
                         break;
                     case SDLK_d:
                         letterinput = 'D';
+                          
+                        if ((existe(t_wordtoguess, letterinput)==0) && count<7) count++;
                         break;
                     case SDLK_f:
                         letterinput = 'F';
-                    break;
+                          
+                        if ((existe(t_wordtoguess, letterinput)==0) && count<7) count++;
+                        break;
                     case SDLK_g:
                         letterinput = 'G';
-                    break;
+                          
+                        if ((existe(t_wordtoguess, letterinput)==0) && count<7) count++;
+                        break;
                     case SDLK_h:
+                          
+                        if ((existe(t_wordtoguess, letterinput)==0) && count<7) count++;
                         letterinput = 'H';
-                    break;
+                        break;
                     case SDLK_j:
                         letterinput = 'J';
-                    break;
+                          
+                        if ((existe(t_wordtoguess, letterinput)==0) && count<7) count++;
+                        break;
                     case SDLK_k:
                         letterinput = 'K';
-                    break;
+                          
+                        if ((existe(t_wordtoguess, letterinput)==0) && count<7) count++;
+                        break;
                     case SDLK_l:
                         letterinput = 'L';
-                    break;
+                          
+                        if ((existe(t_wordtoguess, letterinput)==0) && count<7) count++;
+                        break;
                     case SDLK_m:
                         letterinput = 'M';
+                          
+                        if ((existe(t_wordtoguess, letterinput)==0) && count<7) count++;
                         break;
                     case SDLK_w:
                         letterinput = 'W';
-                    break;
+                          
+                        if ((existe(t_wordtoguess, letterinput)==0) && count<7) count++;
+                        break;
                     case SDLK_x:
                         letterinput = 'X';
+                          
+                        if ((existe(t_wordtoguess, letterinput)==0) && count<7) count++;
                     case SDLK_c:
                         letterinput = 'C';
-                    break;
+                          
+                        if ((existe(t_wordtoguess, letterinput)==0) && count<7) count++;
+                        break;
                     case SDLK_v:
                         letterinput = 'V';
-                    break;
+                          
+                        if ((existe(t_wordtoguess, letterinput)==0) && count<7) count++;
+                        break;
                     case SDLK_b:
                         letterinput = 'B';
-                    break;
+                          
+                        if ((existe(t_wordtoguess, letterinput)==0) && count<7) count++;
+                        break;
                     case SDLK_n:
                         letterinput = 'N';
-                    break;
-
-                    case SDLK_SPACE:
-                        onplay++;
+                          
+                        if ((existe(t_wordtoguess, letterinput)==0) && count<7) count++;
                         break;
+
+
                     case SDLK_RETURN:
 
                         onmenu2=0;
                         onplay=1;
                         newgame=1;
+                        count = 0;
                         break;
                         
                         }
@@ -344,7 +425,7 @@ int main(int argc, char *argv[])
 
 
 
-        SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 255, 255, 255));
+//         SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 255, 255, 255));
         if(newgame){
             LoadRandomWord();
             initlosewin();
@@ -365,7 +446,13 @@ int main(int argc, char *argv[])
         
 
         if (onplay){
+//             if (onplay>=13) onplay=1;
+//             menu = NULL;
 
+
+//             char * s_word = RandomWord (RandomWordPos (), DICTIONARY);
+            
+//             letterinput =s_word;
             
             
 
@@ -379,13 +466,23 @@ int main(int argc, char *argv[])
             SDL_BlitSurface(guessedword, NULL, ecran, &WordPos);
             
             /*    hangman blit */
-            if (onplay>7){
-                SDL_BlitSurface(WinLose[onplay+4], NULL, ecran, &WinLosePos);
-                
-            }
-            else{
-            SDL_BlitSurface(WinLose[onplay+4], NULL, ecran, &HangPosition);
-            }
+//             if (count>5){
+//             SDL_BlitSurface(WinLose[count+6], NULL, ecran, &WinLosePos);
+//             printf("Haaaaaaang\n");
+//             printf("%d count1 /n",count);
+//                 
+//             }
+                if (count > 6){
+                    SDL_BlitSurface(WinLose[count+4], NULL, ecran, &WinLosePos);
+                    SDL_Delay(100);
+                    count = 9;
+                    onmenu2 =1;
+                    SDL_BlitSurface(WinLose[count+3], NULL, ecran, &WinLosePos);
+                    
+                }
+                SDL_BlitSurface(WinLose[count+4], NULL, ecran, &WinLosePos);
+                            printf("jzdhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhg\n");
+                            printf("%d count /n",count);
             
             
         }
@@ -399,7 +496,8 @@ int main(int argc, char *argv[])
         SDL_Flip(ecran);
     }
 
-    TTF_CloseFont(police);
+    TTF_CloseFont(menupolice);
+    TTF_CloseFont(wordpolice);
     TTF_Quit();
 
     SDL_FreeSurface(menu);
