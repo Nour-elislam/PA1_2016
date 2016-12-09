@@ -10,16 +10,16 @@
 #define NB_IMG 14
 #define NB_LIVES 6
 #define DICTIONARY      "file.txt"
-#define NB_TEST         12          
-#define NB_WORD         331612      
-#define MAX_LEN         50         
+#define NB_TEST         12          /* Nombre d'essais pour trouver le mot.   */
+#define NB_WORD         331612      /* Nombre de mots dans le dictionnaire.   */
+#define MAX_LEN         50          /* Taille maximum d'un mot.               */
 #define NOT_FOUND  '-' 
 
 
 
 
     SDL_Surface *ecran = NULL, *menu = NULL, *menu2 = NULL, *fond = NULL, *guessedword = NULL , *WinLose[NB_IMG];
-    SDL_Rect menuPosition, WordPos, WinLosePos, BgPosition, HangPosition, menu2Pos;
+    SDL_Rect menuPosition, WordPos, winpos, losePos, BgPosition, HangPosition, menu2Pos;
     SDL_Event ongame;//, textin;
     TTF_Font *menupolice = NULL, *wordpolice = NULL;
     SDL_Color Black = {0, 0, 20};
@@ -55,6 +55,7 @@ int RandomWordPos (void)
     
     
     
+    
 
 char * RandomWord (int word_pos, const char * dictionary)
 {
@@ -73,6 +74,7 @@ char * RandomWord (int word_pos, const char * dictionary)
          
          while (fgets (buf, sizeof buf, fp) != NULL)
          {
+
             if (count == word_pos)
             {
 
@@ -160,8 +162,10 @@ void Initialisation(){
     WordPos.y = 360;
     menuPosition.x = 207;
     menuPosition.y = 200;
-    WinLosePos.x = 180;
-    WinLosePos.y = 70;
+    winpos.x = 180;
+    winpos.y = 70;
+    losePos.x = 310;
+    losePos.y = 70;
     menu2Pos.x = 200;
     menu2Pos.y =20;
     
@@ -175,23 +179,7 @@ void Initialisation(){
     
 }
 
-// int ifexistsinWtoShow(char linput, size_t lenght){
-//     int exists = 0;
-//     for (int i =0 ; i<lenght; i++){
-//         if (strcspn(t_wordtoshow, linput)){
-//             exists = 1;
-//         }
-//     }
-// }
-// int ifexistsinWtoGuess(char linput, size_t lenght){
-//     int exists = 0;
-//     for (int i =0 ; i<lenght; i++){
-//         if (t_wordtoguess[i]==linput){
-//             exists = 1;
-//         }   
-//     }
-//     
-// }
+
 
 int existe(char *str, char caract)
     {
@@ -446,13 +434,7 @@ int main(int argc, char *argv[])
         
 
         if (onplay){
-//             if (onplay>=13) onplay=1;
-//             menu = NULL;
 
-
-//             char * s_word = RandomWord (RandomWordPos (), DICTIONARY);
-            
-//             letterinput =s_word;
             
             
 
@@ -465,26 +447,21 @@ int main(int argc, char *argv[])
             /* word blit */
             SDL_BlitSurface(guessedword, NULL, ecran, &WordPos);
             
-            /*    hangman blit */
-//             if (count>5){
-//             SDL_BlitSurface(WinLose[count+6], NULL, ecran, &WinLosePos);
-//             printf("Haaaaaaang\n");
-//             printf("%d count1 /n",count);
-//                 
-//             }
-                if (count > 6){
-                    SDL_BlitSurface(WinLose[count+4], NULL, ecran, &WinLosePos);
-                    SDL_Delay(100);
-                    count = 9;
+
+                if (count == 7){
+                    SDL_BlitSurface(WinLose[count+4], NULL, ecran, &HangPosition);
+                    SDL_BlitSurface(WinLose[NB_IMG-1], NULL, ecran, &losePos);
+   //                 SDL_Delay(1000);
+    //                count = 9;
                     onmenu2 =1;
-                    SDL_BlitSurface(WinLose[count+3], NULL, ecran, &WinLosePos);
+
                     
                 }
-                SDL_BlitSurface(WinLose[count+4], NULL, ecran, &WinLosePos);
-                            printf("jzdhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhg\n");
-                            printf("%d count /n",count);
+                if (count < 7){
+                    SDL_BlitSurface(WinLose[count+4], NULL, ecran, &HangPosition);
+
             
-            
+                }
         }
         if(onmenu) {
                     /* menu Blit */
