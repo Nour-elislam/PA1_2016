@@ -371,7 +371,7 @@ void Handlekeyboard(){// gestion du clavier
 
 
                     case SDLK_RETURN:
-                        if(onmenu || onmenu2){ // passage du menu1 ou menu2 du jeu
+                        if(onmenu || onmenu2 ){ // passage du menu1 ou menu2 du jeu
                             onmenu = 0;
                             onmenu2=0;
                             onplay=1;
@@ -413,6 +413,7 @@ int main(int argc, char *argv[])
         
         if(win()){
             onplay = 0;
+	    onmenu2 = 1;
             SDL_BlitSurface(WinLose[NB_IMG-2], NULL, ecran, &winpos);
 	    SDL_BlitSurface(menu2, NULL, ecran, &menu2Pos);
         }
@@ -427,9 +428,10 @@ int main(int argc, char *argv[])
                     SDL_BlitSurface(WinLose[count+4], NULL, ecran, &HangPosition);
                     SDL_BlitSurface(WinLose[NB_IMG-1], NULL, ecran, &losePos);
 
-                    onmenu2 =1;                  
+                    onmenu2 =1;
+
+                    
                 }
-                /* lose condition */
                 if (count < 7){
                     SDL_BlitSurface(WinLose[count+4], NULL, ecran, &HangPosition);            
                 }
