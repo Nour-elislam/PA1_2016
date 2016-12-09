@@ -10,9 +10,9 @@
 #define NB_IMG 14
 #define NB_LIVES 6
 #define DICTIONARY      "file.txt"
-#define NB_TEST         12          /* Nombre d'essais pour trouver le mot.   */
-#define NB_WORD         331612      /* Nombre de mots dans le dictionnaire.   */
-#define MAX_LEN         50          /* Taille maximum d'un mot.               */
+#define NB_TEST         12         
+#define NB_WORD         331612      
+#define MAX_LEN         50          
 #define NOT_FOUND  '-' 
 
 
@@ -29,7 +29,7 @@
     char t_wordtoshow[MAX_LEN];
     char* wordtoshow;
     char* linput;
-    int play = 1, lives=1, onplay=0, onmenu, onmenu2, newgame=1;
+    int play = 1, lives=1, onplay=0, onmenu = 1, onmenu2, newgame=1;
     unsigned int count = 0;
     size_t WordLen;
     
@@ -37,9 +37,6 @@
 
     
     SDL_Surface *TextOnScreen = NULL;
-    
-    
-
 
  
     
@@ -56,6 +53,8 @@ int RandomWordPos (void)
     
     
     
+    
+
 
 char * RandomWord (int word_pos, const char * dictionary)
 {
@@ -74,10 +73,10 @@ char * RandomWord (int word_pos, const char * dictionary)
          
          while (fgets (buf, sizeof buf, fp) != NULL)
          {
-
+            
             if (count == word_pos)
             {
-
+               
                {
                   char * p = strchr (buf, '\n');
 
@@ -111,9 +110,6 @@ char * RandomWord (int word_pos, const char * dictionary)
 }
     
 
-
-
-
     
 void lSprites(){
     for(int i = 0; i < NB_IMG; i++){
@@ -146,8 +142,8 @@ void Initialisation(){
     SDL_WM_SetCaption("Welcome to hangman", NULL);
 
     /* load font */
-    menupolice = TTF_OpenFont("angelina.ttf", 40);
-    wordpolice = TTF_OpenFont("arial.ttf", 30);
+    menupolice = TTF_OpenFont("Polices/angelina.ttf", 40);
+    wordpolice = TTF_OpenFont("Polices/arial.ttf", 30);
     
         /*  loadSprites  */
     lSprites();
@@ -180,7 +176,6 @@ void Initialisation(){
 }
 
 
-
 int existe(char *str, char caract)
     {
     unsigned int i;
@@ -192,20 +187,18 @@ int existe(char *str, char caract)
     return (0);
     }
 
+
+    
 void LoadRandomWord(){
     wordtoguess =RandomWord (RandomWordPos (), DICTIONARY);
     strcpy(t_wordtoguess, wordtoguess);
     WordLen = strlen(t_wordtoguess);
-   printf ("longueur = %d\n", WordLen);
-//    for(int i = 0; i < WordLen; i++){
-//        printf("%c\t",t_wordtoguess[i]);
-// }
-    
- //   guessedword = TTF_RenderText_Solid(police,wordtoguess , White);
-    
+   printf ("longueur = %d\n", WordLen);    
 }
-void initlosewin(){
 
+
+
+void initlosewin(){
     memset (t_wordtoshow, 0, sizeof (t_wordtoshow));
     for(int i = 1; i < WordLen-1; i++){
         t_wordtoshow[i]=NOT_FOUND;
@@ -217,13 +210,10 @@ void initlosewin(){
             t_wordtoshow[i]=t_wordtoguess[WordLen-1];
             printf("%s\n",t_wordtoguess);
         }
-
     }
     t_wordtoshow[0]=t_wordtoguess[0];
     t_wordtoshow[WordLen-1]=t_wordtoguess[WordLen-1];
     wordtoshow=(char*)t_wordtoshow;
-
-//     guessedword = TTF_RenderText_Solid(wordpolice, wordtoshow , White);
     SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 255, 255, 255));
 }
 
@@ -234,20 +224,20 @@ void playlosewin (){
             t_wordtoshow[i]=letterinput;
         }
     }
-    
      guessedword = TTF_RenderText_Solid(wordpolice,wordtoshow , White);
 }
 
+int win(){
+    if (strcmp(wordtoguess,wordtoshow) == 0)
+    return 1;
+    else return 0;
+}
+
+
+
 int main(int argc, char *argv[])
 {
-
-
-    Initialisation();
-    
-
-
-
-    
+    Initialisation();    
     /*   game loop   */
     while (play)
     {
@@ -264,11 +254,8 @@ int main(int argc, char *argv[])
                         play=0;
                         break;
                     case SDLK_a:
-                        letterinput = 'A';
-                          
-                        if ((existe(t_wordtoguess, letterinput)==0) && count<7) count++;
-//                         printf("\n %d \n", ifexistsinWtoGuess(letterinput, WordLen));
-                        
+                        letterinput = 'A';                          
+                        if ((existe(t_wordtoguess, letterinput)==0) && count<7) count++;                        
                         break;
                     case SDLK_z:
                         letterinput = 'Z';
@@ -398,7 +385,7 @@ int main(int argc, char *argv[])
 
 
                     case SDLK_RETURN:
-
+                        onmenu = 0;
                         onmenu2=0;
                         onplay=1;
                         newgame=1;
@@ -408,17 +395,14 @@ int main(int argc, char *argv[])
                         }
         }
         
-        if (onplay>=9)onplay =9;
-        if(onplay>7)onmenu2 =1, newgame=0;
 
-
-
-//         SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 255, 255, 255));
         if(newgame){
             LoadRandomWord();
             initlosewin();
             newgame =0;
         }
+
+
 
 
         
@@ -427,27 +411,19 @@ int main(int argc, char *argv[])
                 if (onmenu2){
             SDL_BlitSurface(menu2, NULL, ecran, &menu2Pos);
         }
-//         if(onplay==1){
-//             initlosewin();
-//             
-//         }
         
+        if(win()){
+            onmenu2 = 1;
+            onplay = 0;
+            SDL_BlitSurface(WinLose[NB_IMG-2], NULL, ecran, &winpos);
+        }
 
         if (onplay){
-
-            
-            
-
-
-            
-            
-            onmenu =0;
             playlosewin();
-            
             /* word blit */
             SDL_BlitSurface(guessedword, NULL, ecran, &WordPos);
             
-
+            /*    hangman blit */
                 if (count == 7){
                     SDL_BlitSurface(WinLose[count+4], NULL, ecran, &HangPosition);
                     SDL_BlitSurface(WinLose[NB_IMG-1], NULL, ecran, &losePos);
@@ -458,20 +434,20 @@ int main(int argc, char *argv[])
                     
                 }
                 if (count < 7){
-                    SDL_BlitSurface(WinLose[count+4], NULL, ecran, &HangPosition);
-
-            
+                    SDL_BlitSurface(WinLose[count+4], NULL, ecran, &HangPosition);            
                 }
         }
-        if(onmenu) {
-                    /* menu Blit */
+            if(onmenu) {
         SDL_BlitSurface(menu, NULL, ecran, &menuPosition); 
-        }
-
-
         
+        }
+    
         SDL_Flip(ecran);
     }
+                        /* menu Blit */
+    
+    
+    
 
     TTF_CloseFont(menupolice);
     TTF_CloseFont(wordpolice);
