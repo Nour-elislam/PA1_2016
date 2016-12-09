@@ -10,9 +10,9 @@
 #define NB_IMG 14
 #define NB_LIVES 6
 #define DICTIONARY      "file.txt"
-#define NB_TEST         12         
-#define NB_WORD         331612      
-#define MAX_LEN         50          
+#define NB_TEST         12          
+#define NB_WORD         331612     
+#define MAX_LEN         50         
 #define NOT_FOUND  '-' 
 
 
@@ -20,7 +20,7 @@
 
     SDL_Surface *ecran = NULL, *menu = NULL, *menu2 = NULL, *fond = NULL, *guessedword = NULL , *WinLose[NB_IMG];
     SDL_Rect menuPosition, WordPos, winpos, losePos, BgPosition, HangPosition, menu2Pos;
-    SDL_Event ongame;//, textin;
+    SDL_Event ongame;
     TTF_Font *menupolice = NULL, *wordpolice = NULL;
     SDL_Color Black = {0, 0, 20};
     SDL_Color White = {255,255,255};
@@ -32,6 +32,7 @@
     int play = 1, lives=1, onplay=0, onmenu = 1, onmenu2, newgame=1;
     unsigned int count = 0;
     size_t WordLen;
+ 
     
     char letterinput = 'd';
 
@@ -53,12 +54,11 @@ int RandomWordPos (void)
     
     
     
-    
-
 
 char * RandomWord (int word_pos, const char * dictionary)
 {
-   char * word = NULL;
+          char * word = NULL;
+
    
    
    if (dictionary != NULL)
@@ -73,10 +73,10 @@ char * RandomWord (int word_pos, const char * dictionary)
          
          while (fgets (buf, sizeof buf, fp) != NULL)
          {
-            
+
             if (count == word_pos)
             {
-               
+
                {
                   char * p = strchr (buf, '\n');
 
@@ -142,8 +142,8 @@ void Initialisation(){
     SDL_WM_SetCaption("Welcome to hangman", NULL);
 
     /* load font */
-    menupolice = TTF_OpenFont("Polices/angelina.ttf", 40);
-    wordpolice = TTF_OpenFont("Polices/arial.ttf", 30);
+    menupolice = TTF_OpenFont("angelina.ttf", 40);
+    wordpolice = TTF_OpenFont("arial.ttf", 30);
     
         /*  loadSprites  */
     lSprites();
@@ -193,7 +193,9 @@ void LoadRandomWord(){
     wordtoguess =RandomWord (RandomWordPos (), DICTIONARY);
     strcpy(t_wordtoguess, wordtoguess);
     WordLen = strlen(t_wordtoguess);
-   printf ("longueur = %d\n", WordLen);    
+   printf ("longueur = %d\n", WordLen);
+   printf("%s\n",t_wordtoguess);
+
 }
 
 
@@ -204,11 +206,10 @@ void initlosewin(){
         t_wordtoshow[i]=NOT_FOUND;
         if(t_wordtoguess[0]==t_wordtoguess[i]){
             t_wordtoshow[i]=t_wordtoguess[0];
-            printf("%s\n",t_wordtoguess);
         }
         if(t_wordtoguess[WordLen-1]==t_wordtoguess[i]){
             t_wordtoshow[i]=t_wordtoguess[WordLen-1];
-            printf("%s\n",t_wordtoguess);
+            
         }
     }
     t_wordtoshow[0]=t_wordtoguess[0];
@@ -385,11 +386,13 @@ int main(int argc, char *argv[])
 
 
                     case SDLK_RETURN:
-                        onmenu = 0;
-                        onmenu2=0;
-                        onplay=1;
-                        newgame=1;
-                        count = 0;
+                        if(onmenu || onmenu2){
+                            onmenu = 0;
+                            onmenu2=0;
+                            onplay=1;
+                            newgame=1;
+                            count = 0;
+                        }
                         break;
                         
                         }
@@ -444,7 +447,7 @@ int main(int argc, char *argv[])
     
         SDL_Flip(ecran);
     }
-                        /* menu Blit */
+ 
     
     
     
